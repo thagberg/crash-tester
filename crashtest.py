@@ -3,16 +3,16 @@ import argparse
 
 from tester import Tester
 
-commands = [
-    ['ls', '-l'],
-    ['exit 1'],
-    ['exit 0']
-]
 # commands = [
-#     ['rm -rf ../appData/cache/'],
-#     ['rm -rf ./appData/cache/'],
-#     ['./vrvStealth.exe --showConsole --plugin vrvAutoTestPlugin.dll -e "SavedViewTest()" "../userData/terrains/Ala Moana.mtf" -n 3']
+#     ['ls', '-l'],
+#     ['exit 1'],
+#     ['exit 0']
 # ]
+commands = [
+    ['rm -rf ../appData/cache/'],
+    ['rm -rf ./appData/cache/'],
+    ['./vrvStealth.exe --showConsole --plugin vrvAutoTestPlugin.dll -e "SavedViewTest(,0)" "../userData/terrains/Ala Moana.mtf" -n 3']
+]
 
 parser = argparse.ArgumentParser(description="Run commands and log any crashes")
 parser.add_argument('--loop', type=bool, action='store', default=False)

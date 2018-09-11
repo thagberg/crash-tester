@@ -33,7 +33,7 @@ class Tester():
                 main_log.write("Command completed successfully:\n\t{}\n".format(
                     " ".join(command)
                 ))
-                main_log.write("\tLog available at: ./passlogs/{}.log".format(run_id))
+                main_log.write("\tLog available at: ./passlogs/{}.log\n".format(run_id))
             runlog.close()
             shutil.move(runlog_name, "./{}/{}.log".format(logdir, run_id))
         main_log.close()
