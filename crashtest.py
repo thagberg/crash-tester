@@ -14,6 +14,13 @@ commands = [
     ['./vrvStealth.exe --showConsole --plugin vrvAutoTestPlugin.dll -e "SavedViewTest(,0)" "../userData/terrains/Ala Moana.mtf" -n 3']
 ]
 
+email_recipients = [
+    'thagberg@mak.com',
+    'tgeorge@mak.com'
+]
+
+email_sender = 'crashes@mak.com'
+
 parser = argparse.ArgumentParser(description="Run commands and log any crashes")
 parser.add_argument('--loop', type=bool, action='store', default=False)
 args = parser.parse_args()
@@ -22,7 +29,7 @@ def main():
     tester = Tester(commands)
     should_run = True
     while should_run:
-        tester.run()
+        tester.run(email_recipients, email_sender)
         should_run = args.loop
 
 if __name__ == '__main__':

@@ -3,6 +3,9 @@ import datetime
 import uuid
 import shutil
 import os
+import smtplib
+
+from email.mime.text import MIMEText
 
 class Tester():
 
@@ -10,7 +13,7 @@ class Tester():
         self.commands = commands
         self.log_name = "crash-{}.log".format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
 
-    def run(self):
+    def run(self, email_recipients=None, email_sender=None):
         if not os.path.exists("./tmp"):
             os.makedirs("./tmp")
         if not os.path.exists("./passlogs"):
@@ -21,7 +24,7 @@ class Tester():
         for command in self.commands:
             run_id = str(uuid.uuid4())
             runlog_name = "./tmp/{}.log".format(run_id)
-            runlog = open(runlog_name, "w")
+            runlog = open(runlog_name, "a+")
             retcode = subprocess.call(command, stdout=runlog, shell=True)
             logdir = "passlogs"
             if not retcode == 0:
@@ -29,6 +32,8 @@ class Tester():
                 main_log.write("Command returned non-zero code:\n\t{} - {}\n".format(
                     " ".join(command), retcode))
                 main_log.write("\tLog available at: ./crashlogs/{}.log\n".format(run_id))
+                if email_recipients and email_sender:
+                    self.send_email(email_recipients, email_sender, command, runlog.read())
             else:
                 main_log.write("Command completed successfully:\n\t{}\n".format(
                     " ".join(command)
@@ -37,4 +42,15 @@ class Tester():
             runlog.close()
             shutil.move(runlog_name, "./{}/{}.log".format(logdir, run_id))
         main_log.close()
+
+    def send_email(self, recipients, sender, command, message):
+        if not isinstance(recipients , list):
+            recipients = [recipients]
+        msg = MIMEText(message)
+        msg['Subject'] = "Crash detected: {}".format(command)
+        msg['From'] = sender
+        msg['To'] = ", ".join(recipients)
+        s = smtplib.SMTP('localhost')
+        s.sendmail(sender, recipients, msg.as_string())
+        s.quit()
             
