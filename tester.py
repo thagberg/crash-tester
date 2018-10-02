@@ -14,6 +14,7 @@ class Tester():
         self.log_name = "crash-{}.log".format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
 
     def run(self, email_recipients=None, email_sender=None):
+        os.environ['MAK_MINIDUMPER_PROMPT_DISABLE'] = '1'
         if not os.path.exists("./tmp"):
             os.makedirs("./tmp")
         if not os.path.exists("./passlogs"):
@@ -25,12 +26,15 @@ class Tester():
             run_id = str(uuid.uuid4())
             runlog_name = "./tmp/{}.log".format(run_id)
             runlog = open(runlog_name, "a+")
-            retcode = subprocess.call(command, stdout=runlog, shell=True)
+            p = subprocess.Popen(command, stdout=runlog)
+            pid = p.pid
+            retcode = p.wait()
             logdir = "passlogs"
             if not retcode == 0:
                 logdir = "crashlogs"
                 main_log.write("Command returned non-zero code:\n\t{} - {}\n".format(
                     " ".join(command), retcode))
+                main_log.write("\tProcess ID was: {}".format(pid))
                 main_log.write("\tLog available at: ./crashlogs/{}.log\n".format(run_id))
                 if email_recipients and email_sender:
                     self.send_email(email_recipients, email_sender, command, runlog.read())
