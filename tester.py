@@ -26,7 +26,7 @@ class Tester():
             run_id = str(uuid.uuid4())
             runlog_name = "./tmp/{}.log".format(run_id)
             runlog = open(runlog_name, "a+")
-            p = subprocess.Popen(command, stdout=runlog)
+            p = subprocess.Popen(command, cwd="bin64", stdout=runlog)
             pid = p.pid
             retcode = p.wait()
             logdir = "passlogs"
